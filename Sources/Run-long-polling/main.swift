@@ -1,4 +1,5 @@
 import Foundation
+import App
 import TgBotSDK
 import ChatBotSDK
 
