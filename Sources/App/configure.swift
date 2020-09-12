@@ -1,11 +1,45 @@
 {{#fluent}}import Fluent
 import Fluent{{fluent.db.module}}Driver
 {{/fluent}}import Vapor
+import ChatBotSDK
 
 // configures your application
 public func configure(_ app: Application) throws {
     // uncomment to serve files from /Public folder
-    // app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory)){{#fluent}}
+    // app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
+
+    FileManager.ChatBotSDK.instance = FileManager.ChatBotSDK(
+        documentsUrl: URL(fileURLWithPath: app.directory.workingDirectory).appendingPathComponent(".documents")
+    )
+    if !FileManager.default.fileExists(
+        atPath: FileManager.ChatBotSDK.instance.documentsUrl.path
+    ) {
+        try? FileManager.default.createDirectory(
+            at: FileManager.ChatBotSDK.instance.documentsUrl,
+            withIntermediateDirectories: true,
+            attributes: nil)
+    }
+
+    let encoder = JSONEncoder()
+    encoder.keyEncodingStrategy = .convertToSnakeCase
+    ContentConfiguration.global.use(encoder: encoder, for: .json)
+
+    let decoder = JSONDecoder()
+    decoder.keyDecodingStrategy = .convertFromSnakeCase
+    ContentConfiguration.global.use(decoder: decoder, for: .json)
+
+    //app.http.server.configuration.hostname = "..."
+    //app.http.server.configuration.port = ...
+    //
+    //try app.http.server.configuration.tlsConfiguration = .forServer(
+    //    certificateChain: [
+    //        .certificate(.init(
+    //            file: "cert.pem",
+    //            format: .pem
+    //        ))
+    //    ],
+    //    privateKey: .file("key.pem")
+    //){{#fluent}}
 
     {{#fluent.db.is_postgres}}app.databases.use(.postgres(
         hostname: Environment.get("DATABASE_HOST") ?? "localhost",
