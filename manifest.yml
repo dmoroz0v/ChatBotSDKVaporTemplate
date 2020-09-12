@@ -48,11 +48,26 @@ files:
       - folder: Run
         files:
           - main.swift
+      - folder: Run-long-polling
+        files:
+          - main.swift
       - folder: App
         files:
           - file: configure.swift
             dynamic: true
           - file: routes.swift
+            dynamic: true
+          - file: Revert.swift
+            dynamic: true
+          - file: Picker.swift
+            dynamic: true
+          - file: DatabaseSelect.swift
+            dynamic: true
+          - file: DatabaseInsert.swift
+            dynamic: true
+          - file: Database.swift
+            dynamic: true
+          - file: BotAssemblyImpl.swift
             dynamic: true
           - folder: Models
             if: fluent
