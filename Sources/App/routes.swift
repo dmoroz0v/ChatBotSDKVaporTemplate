@@ -5,10 +5,6 @@ import TgBotSDK
 
 func routes(_ app: Application) throws {
 
-    app.get("hello") { req -> String in
-        return "Hello, world!"
-    }{{#fluent}}
-
     app.post("webhook") { req -> String in
         let b = TgBotSDK.Bot(
             flowStorage: try! FlowStorageImpl(),
@@ -21,7 +17,7 @@ func routes(_ app: Application) throws {
         b.handleUpdate(update: update)
 
         return "Ok"
-    }
+    }{{#fluent}}
 
     try app.register(collection: TodoController()){{/fluent}}
 }
