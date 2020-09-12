@@ -20,7 +20,7 @@ let package = Package(
         // 💧 A server-side Swift web framework.
         .package(url: "https://github.com/vapor/vapor.git", from: "4.0.0"){{#fluent}},
         .package(url: "https://github.com/vapor/fluent.git", from: "4.0.0"),
-        .package(url: "https://github.com/vapor/fluent-{{fluent.db.url}}-driver.git", from: "{{fluent.db.version}}"){{/fluent}}
+        .package(url: "https://github.com/vapor/fluent-{{fluent.db.url}}-driver.git", from: "{{fluent.db.version}}"),{{/fluent}}
         .package(url: "https://github.com/dmoroz0v/ChatBotSDK.git", .exact("0.0.6")),
         .package(url: "https://github.com/dmoroz0v/TgBotSDK.git", .exact("0.0.8")),
     ],
