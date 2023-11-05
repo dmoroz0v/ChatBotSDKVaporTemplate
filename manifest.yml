@@ -65,23 +65,20 @@ files:
             dynamic: true
           - file: DatabaseInsert.swift
             dynamic: true
-          - file: Database.swift
+          - file: BotFactory.swift
+            dynamic: true
+          - file: FlowStorageImpl.swift
             dynamic: true
           - file: BotAssemblyImpl.swift
             dynamic: true
           - folder: Models
-            if: fluent
             files:
-              - Todo.swift
+              - Flow.swift
+              - Row.swift
           - folder: Migrations
-            if: fluent
             files:
-              - CreateTodo.swift
-          - folder: Controllers
-            files:
-              - .gitkeep
-              - file: TodoController.swift
-                if: fluent
+              - CreateFlow.swift
+              - CreateRow.swift
   - folder: Tests
     files:
       - folder: AppTests
