@@ -1,9 +1,10 @@
 import Foundation
 import ChatBotSDK
+import Fluent
 
 public final class BotAssemblyImpl: BotAssembly {
 
-    public var commandsHandlers: [CommandHandler] = [
+    public private(set) lazy var commandsHandlers: [CommandHandler] = [
 
         CommandHandler(
             command: Command(value: "/cancel"),
@@ -26,18 +27,21 @@ public final class BotAssemblyImpl: BotAssembly {
         CommandHandler(
             command: Command(value: "/insert"),
             description: "Insert value",
-            flowAssembly: DatabaseInsertOperationFlowAssembly()
+            flowAssembly: DatabaseInsertOperationFlowAssembly(db: db)
         ),
 
         CommandHandler(
             command: Command(value: "/select"),
             description: "Select values",
-            flowAssembly: DatabaseSelectOperationFlowAssembly()
+            flowAssembly: DatabaseSelectOperationFlowAssembly(db: db)
         ),
 
     ]
 
-    public init() {
+    private let db: Database
+
+    public init(db: Database) {
+        self.db = db
     }
 
 }

@@ -1,28 +1,16 @@
 import Foundation
 import App
 import TgBotSDK
-import ChatBotSDK
 
-FileManager.ChatBotSDK.instance = FileManager.ChatBotSDK(documentsUrl: URL(fileURLWithPath: "./.documents"))
-if !FileManager.default.fileExists(
-    atPath: FileManager.ChatBotSDK.instance.documentsUrl.path
-) {
-    try? FileManager.default.createDirectory(
-        at: FileManager.ChatBotSDK.instance.documentsUrl,
-        withIntermediateDirectories: true,
-        attributes: nil)
-}
+import App
+import Vapor
 
-struct Config: Decodable {
-    let telegram_bot_token: String
-}
+var env = try Environment.detect()
+try LoggingSystem.bootstrap(from: &env)
+let app = Application(env)
+try configure(app)
 
-
-let b = TgBotSDK.Bot(
-    flowStorage: try! FlowStorageImpl(),
-    botAssembly: BotAssemblyImpl(),
-    token: "",
-    apiEndpoint: "https://api.telegram.org/bot")
+let b = BotFactory().tgBot(app)
 
 DispatchQueue.global().async {
     while true {

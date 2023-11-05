@@ -18,21 +18,25 @@ let package = Package(
     ],
     dependencies: [
         // 💧 A server-side Swift web framework.
-        .package(url: "https://github.com/vapor/vapor.git", from: "4.0.0"),{{#fluent}}
-        .package(url: "https://github.com/vapor/fluent.git", from: "4.0.0"),
-        .package(url: "https://github.com/vapor/fluent-{{fluent.db.url}}-driver.git", from: "{{fluent.db.version}}"),{{/fluent}}
-        .package(url: "https://github.com/dmoroz0v/ChatBotSDK.git", .exact("0.0.6")),
-        .package(url: "https://github.com/dmoroz0v/TgBotSDK.git", .exact("0.0.9")),
+        .package(url: "https://github.com/vapor/vapor.git", from: "4.83.1"),
+        // 🗄 An ORM for SQL and NoSQL databases.
+        .package(url: "https://github.com/vapor/fluent.git", from: "4.8.0"),
+        // 🪶 Fluent driver for SQLite.
+        .package(url: "https://github.com/vapor/fluent-sqlite-driver.git", from: "4.0.0"),
+
+        .package(
+            url: "https://github.com/dmoroz0v/ChatBotSDK.git", .exact("0.0.8")
+        ),
     ],
     targets: [
         .target(
             name: "App",
-            dependencies: [{{#fluent}}
-                .product(name: "Fluent", package: "fluent"),
-                .product(name: "Fluent{{fluent.db.module}}Driver", package: "fluent-{{fluent.db.url}}-driver"),{{/fluent}}
+            dependencies: [
                 .product(name: "Vapor", package: "vapor"),
-                "ChatBotSDK",
-                "TgBotSDK",
+                .product(name: "ChatBotSDK", package: "ChatBotSDK"),
+                .product(name: "TgBotSDK", package: "ChatBotSDK"),
+                .product(name: "Fluent", package: "fluent"),
+                .product(name: "FluentSQLiteDriver", package: "fluent-sqlite-driver"),
             ],
             swiftSettings: [
                 // Enable better optimizations when building in Release configuration. Despite the use of

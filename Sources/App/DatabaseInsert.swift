@@ -1,5 +1,6 @@
 import Foundation
 import ChatBotSDK
+import Fluent
 
 final class DatabaseInsertOperationFlowAssembly: FlowAssembly {
 
@@ -8,13 +9,13 @@ final class DatabaseInsertOperationFlowAssembly: FlowAssembly {
     let action: FlowAction
     let context: Storable?
 
-    init() {
+    init(db: Database) {
         let databaseInsertContext = DatabaseInsertContext()
 
         let handler = DatabaseInsertFlowInputHandler()
         handler.context = databaseInsertContext
 
-        let databaseInsertAction = DatabaseInsertOperationAction()
+        let databaseInsertAction = DatabaseInsertOperationAction(db: db)
         databaseInsertAction.context = databaseInsertContext
 
         initialHandlerId = "databaseInsert"
@@ -43,13 +44,19 @@ final class DatabaseInsertContext: Storable {
 
 final class DatabaseInsertOperationAction: FlowAction {
 
+    let db: Database
+
     var context: DatabaseInsertContext?
+
+    init(db: Database) {
+        self.db = db
+    }
 
     func execute(userId: Int64) -> [String] {
         if let text = context?.text {
             do {
-                let database = try Database()
-                try database.insert(value: text, userId: userId)
+                let r = Row(userId: userId, value: text)
+                try r.save(on: db).wait()
                 return ["Succeeded"]
             } catch let e {
                 return [e.localizedDescription]
