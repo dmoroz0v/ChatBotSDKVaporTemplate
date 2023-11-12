@@ -1,21 +1,22 @@
 import Foundation
 import ChatBotSDK
 import Fluent
+import Vapor
 
 final class DatabaseInsertOperationFlowAssembly: FlowAssembly {
 
     let initialHandlerId: String
     let inputHandlers: [String: FlowInputHandler]
     let action: FlowAction
-    let context: Storable?
+    let context: Any?
 
-    init(db: Database) {
+    init(app: Application) {
         let databaseInsertContext = DatabaseInsertContext()
 
         let handler = DatabaseInsertFlowInputHandler()
         handler.context = databaseInsertContext
 
-        let databaseInsertAction = DatabaseInsertOperationAction(db: db)
+        let databaseInsertAction = DatabaseInsertOperationAction(app: app)
         databaseInsertAction.context = databaseInsertContext
 
         initialHandlerId = "databaseInsert"
@@ -26,37 +27,27 @@ final class DatabaseInsertOperationFlowAssembly: FlowAssembly {
 
 }
 
-final class DatabaseInsertContext: Storable {
+final class DatabaseInsertContext {
 
     var text: String?
-
-    func store() -> StorableContainer {
-        let container =  StorableContainer()
-        container.setString(value: text, key: "text")
-        return container
-    }
-
-    func restore(container: StorableContainer) {
-        text = container.stringValue(key: "text")
-    }
 
 }
 
 final class DatabaseInsertOperationAction: FlowAction {
 
-    let db: Database
+    let app: Application
 
     var context: DatabaseInsertContext?
 
-    init(db: Database) {
-        self.db = db
+    init(app: Application) {
+        self.app = app
     }
 
     func execute(userId: Int64) -> [String] {
         if let text = context?.text {
             do {
                 let r = Row(userId: userId, value: text)
-                try r.save(on: db).wait()
+                try r.save(on: app.db).wait()
                 return ["Succeeded"]
             } catch let e {
                 return [e.localizedDescription]
@@ -79,13 +70,6 @@ final class DatabaseInsertFlowInputHandler: FlowInputHandler {
     func handle(userId: Int64, text: String) -> FlowInputHandlerResult {
         context?.text = text
         return .end
-    }
-
-    func store() -> StorableContainer {
-        return StorableContainer()
-    }
-
-    func restore(container: StorableContainer) {
     }
 
 }

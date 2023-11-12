@@ -1,7 +1,7 @@
 name: Vapor Template
 variables:
   - name: fluent
-    description: Would you like to use Fluent?
+    description: Would you like to use Fluent (ORM)?
     type: nested
     variables:
       - name: db
@@ -14,8 +14,9 @@ variables:
               module: Postgres
               url: postgres
               id: psql
-              version: "2.0.0"
+              version: "2.7.2"
               is_postgres: true
+              emoji: "\U0001F418"
           - name: MySQL
             description: ""
             data:
@@ -24,6 +25,7 @@ variables:
               id: mysql
               version: "4.0.0"
               is_mysql: true
+              emoji: "\U0001F42C"
           - name: SQLite
             description: ""
             data:
@@ -32,6 +34,7 @@ variables:
               id: sqlite
               version: "4.0.0"
               is_sqlite: true
+              emoji: "\U0001FAB6"
           - name: Mongo
             description: ""
             data:
@@ -40,50 +43,54 @@ variables:
               id: mongo
               version: "1.0.0"
               is_mongo: true
+              emoji: "\U0001F331"
+  - name: leaf
+    description: Would you like to use Leaf (templating)?
+    type: bool
 files:
   - file: Package.swift
     dynamic: true
   - folder: Sources
     files:
-      - folder: Run
-        files:
-          - main.swift
-      - folder: Run-long-polling
-        files:
-          - main.swift
       - folder: App
         files:
+          - file: BotAssemblyImpl.swift
+            dynamic: true
+          - file: BotFactory.swift
+          - file: Picker.swift
+          - file: Revert.swift
+          - file: entrypoint.swift
           - file: configure.swift
             dynamic: true
           - file: routes.swift
             dynamic: true
-          - file: Revert.swift
-            dynamic: true
-          - file: Picker.swift
-            dynamic: true
-          - file: DatabaseSelect.swift
-            dynamic: true
-          - file: DatabaseInsert.swift
-            dynamic: true
-          - file: BotFactory.swift
-            dynamic: true
-          - file: FlowStorageImpl.swift
-            dynamic: true
-          - file: BotAssemblyImpl.swift
-            dynamic: true
-          - folder: Models
+          - folder: Database
+            if: fluent
             files:
-              - Flow.swift
+              - DatabaseInsert.swift
+              - DatabaseSelect.swift
+          - folder: Models
+            if: fluent
+            files:
               - Row.swift
           - folder: Migrations
+            if: fluent
             files:
-              - CreateFlow.swift
               - CreateRow.swift
   - folder: Tests
     files:
       - folder: AppTests
         files:
           - AppTests.swift
+  - folder: Resources
+    if: leaf
+    files:
+      - folder: Views
+        files:
+          - file: index.leaf
+  - folder: Public
+    files:
+      - .gitkeep
   - file: Dockerfile
     dynamic: true
   - file: docker-compose.yml

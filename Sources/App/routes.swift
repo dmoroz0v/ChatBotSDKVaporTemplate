@@ -1,16 +1,21 @@
-import Vapor
+{{#fluent}}import Fluent
+{{/fluent}}import Vapor
 import TgBotSDK
 
-func routes(_ app: Application) throws {
+func routes(_ app: Application, bot: TgBotSDK.Bot) throws {
+    {{#leaf}}app.get { req async throws in
+        try await req.view.render("index", ["title": "Hello Vapor!"])
+    }{{/leaf}}{{^leaf}}app.get { req async in
+        "It works!"
+    }{{/leaf}}
 
-    app.get() { req in
-        return "It's work!."
+    app.get("hello") { req async -> String in
+        "Hello, world!"
     }
 
     app.post("webhook") { req -> String in
-        let b = BotFactory().tgBot(app)
         let update = try req.content.decode(Update.self)
-        b.handleUpdate(update: update)
+        bot.handleUpdate(update: update)
         return "Ok"
     }
 }

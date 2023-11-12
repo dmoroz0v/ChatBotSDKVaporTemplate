@@ -6,7 +6,7 @@ final class PickerOperationFlowAssembly: FlowAssembly {
     let initialHandlerId: String
     let inputHandlers: [String: FlowInputHandler]
     let action: FlowAction
-    let context: Storable?
+    let context: Any?
 
     init() {
         let pickerContext = PickerContext()
@@ -23,19 +23,9 @@ final class PickerOperationFlowAssembly: FlowAssembly {
 
 }
 
-final class PickerContext: Storable {
+final class PickerContext {
 
     var text: String?
-
-    func store() -> StorableContainer {
-        let container =  StorableContainer()
-        container.setString(value: text, key: "text")
-        return container
-    }
-
-    func restore(container: StorableContainer) {
-        text = container.stringValue(key: "text")
-    }
 
 }
 
@@ -145,23 +135,6 @@ final class PickerFlowInputHandler: FlowInputHandler {
         }
 
         return .end
-    }
-
-    func store() -> StorableContainer {
-        let container = StorableContainer()
-        if let data = data {
-            container.setInt(value: data.page, key: "page")
-            container.setStrings(value: data.items, key: "items")
-        }
-        return container
-    }
-
-    func restore(container: StorableContainer) {
-        let page = container.intValue(key: "page")
-        let items = container.stringsValue(key: "items")
-        if let page = page, let items = items {
-            data = Data(page: page, items: items)
-        }
     }
 
 }

@@ -2,14 +2,15 @@
 import XCTVapor
 
 final class AppTests: XCTestCase {
-    func testHelloWorld() throws {
+    func testHelloWorld() async throws {
         let app = Application(.testing)
         defer { app.shutdown() }
-        try configure(app)
+        let bot = BotFactory().tgBot(app)
+        try await configure(app, bot: bot)
 
-        try app.test(.GET, "hello") { res in
+        try app.test(.GET, "hello", afterResponse: { res in
             XCTAssertEqual(res.status, .ok)
             XCTAssertEqual(res.body.string, "Hello, world!")
-        }
+        })
     }
 }

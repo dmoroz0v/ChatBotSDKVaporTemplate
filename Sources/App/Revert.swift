@@ -6,7 +6,7 @@ final class RevertOperationFlowAssembly: FlowAssembly {
     let initialHandlerId: String
     let inputHandlers: [String: FlowInputHandler]
     let action: FlowAction
-    let context: Storable?
+    let context: Any?
 
     init() {
         let revertContext = RevertContext()
@@ -25,20 +25,9 @@ final class RevertOperationFlowAssembly: FlowAssembly {
 
 }
 
-final class RevertContext: Storable {
+final class RevertContext {
 
     var text: String?
-
-    func store() -> StorableContainer {
-        let container =  StorableContainer()
-        container.setString(value: text, key: "text")
-        return container
-    }
-
-    func restore(container: StorableContainer) {
-        text = container.stringValue(key: "text")
-    }
-
 }
 
 final class RevertOperationAction: FlowAction {
@@ -67,12 +56,4 @@ final class RevertFlowInputHandler: FlowInputHandler {
         context?.text = text
         return .end
     }
-
-    func store() -> StorableContainer {
-        return StorableContainer()
-    }
-
-    func restore(container: StorableContainer) {
-    }
-
 }

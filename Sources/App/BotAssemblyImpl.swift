@@ -1,6 +1,7 @@
 import Foundation
 import ChatBotSDK
-import Fluent
+{{#fluent}}import Fluent{{/fluent}}
+import Vapor
 
 public final class BotAssemblyImpl: BotAssembly {
 
@@ -24,24 +25,26 @@ public final class BotAssemblyImpl: BotAssembly {
             flowAssembly: PickerOperationFlowAssembly()
         ),
 
+        {{#fluent}}
         CommandHandler(
             command: Command(value: "/insert"),
             description: "Insert value",
-            flowAssembly: DatabaseInsertOperationFlowAssembly(db: db)
+            flowAssembly: DatabaseInsertOperationFlowAssembly(app: app)
         ),
 
         CommandHandler(
             command: Command(value: "/select"),
             description: "Select values",
-            flowAssembly: DatabaseSelectOperationFlowAssembly(db: db)
+            flowAssembly: DatabaseSelectOperationFlowAssembly(app: app)
         ),
+        {{/fluent}}
 
     ]
 
-    private let db: Database
+    private let app: Application
 
-    public init(db: Database) {
-        self.db = db
+    public init(app: Application) {
+        self.app = app
     }
 
 }

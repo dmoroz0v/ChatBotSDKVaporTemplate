@@ -1,16 +1,17 @@
 import Foundation
 import ChatBotSDK
 import Fluent
+import Vapor
 
 final class DatabaseSelectOperationFlowAssembly: FlowAssembly {
 
     let initialHandlerId: String
     let inputHandlers: [String: FlowInputHandler]
     let action: FlowAction
-    let context: Storable?
+    let context: Any?
 
-    init(db: Database) {
-        let databaseSelectAction = DatabaseSelectOperationAction(db: db)
+    init(app: Application) {
+        let databaseSelectAction = DatabaseSelectOperationAction(app: app)
 
         initialHandlerId = ""
         inputHandlers = [:]
@@ -21,15 +22,15 @@ final class DatabaseSelectOperationFlowAssembly: FlowAssembly {
 }
 
 final class DatabaseSelectOperationAction: FlowAction {
-    let db: Database
+    let app: Application
 
-    init(db: Database) {
-        self.db = db
+    init(app: Application) {
+        self.app = app
     }
 
     func execute(userId: Int64) -> [String] {
         do {
-            let rows = try Row.query(on: db).filter(\.$userId == userId).all().wait()
+            let rows = try Row.query(on: app.db).filter(\.$userId == userId).all().wait()
             return [rows.map({ $0.value }).joined(separator: "\n")]
         } catch let e {
             return [e.localizedDescription]
