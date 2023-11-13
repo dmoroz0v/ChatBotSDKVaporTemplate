@@ -39,9 +39,9 @@ enum Entrypoint {
             throw error
         }
 
-        //DispatchQueue.global().async {
+        //Task.detached {
         //    while true {
-        //        bot.handleUpdates()
+        //        await bot.handleUpdates()
         //    }
         //}
 
