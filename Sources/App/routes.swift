@@ -15,7 +15,7 @@ func routes(_ app: Application, bot: TgBotSDK.Bot) throws {
 
     app.post("webhook") { req -> String in
         let update = try req.content.decode(Update.self)
-        bot.handleUpdate(update: update)
+        await bot.handleUpdate(update: update)
         return "Ok"
     }
 }

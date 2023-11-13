@@ -42,6 +42,7 @@ RUN find -L "$(swift build --package-path /build -c release --show-bin-path)/" -
 # Ensure that by default, neither the directory nor any of its contents are writable.
 RUN [ -d /build/Public ] && { mv /build/Public ./Public && chmod -R a-w ./Public; } || true
 RUN [ -d /build/Resources ] && { mv /build/Resources ./Resources && chmod -R a-w ./Resources; } || true
+RUN [ -d /build/Cert ] && { mv /build/Cert ./Cert && chmod -R a-w ./Cert; } || true
 
 # ================================
 # Run image
@@ -76,9 +77,9 @@ ENV SWIFT_ROOT=/usr SWIFT_BACKTRACE=enable=yes,sanitize=yes,threads=all,images=a
 # Ensure all further commands run as the vapor user
 USER vapor:vapor
 
-# Let Docker bind to port 8080
-EXPOSE 8080
+# Let Docker bind to port 8443
+EXPOSE 8443
 
-# Start the Vapor service when the image is run, default to listening on 8080 in production environment
+# Start the Vapor service when the image is run, default to listening on 8443 in production environment
 ENTRYPOINT ["./App"]
-CMD ["serve", "--env", "production", "--hostname", "0.0.0.0", "--port", "8080"]
+CMD ["serve", "--env", "production", "--hostname", "0.0.0.0", "--port", "8443"]

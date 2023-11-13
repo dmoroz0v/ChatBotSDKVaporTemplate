@@ -43,11 +43,11 @@ final class DatabaseInsertOperationAction: FlowAction {
         self.app = app
     }
 
-    func execute(userId: Int64) -> [String] {
+    func execute(userId: Int64) async -> [String] {
         if let text = context?.text {
             do {
                 let r = Row(userId: userId, value: text)
-                try r.save(on: app.db).wait()
+                try await r.save(on: app.db)
                 return ["Succeeded"]
             } catch let e {
                 return [e.localizedDescription]

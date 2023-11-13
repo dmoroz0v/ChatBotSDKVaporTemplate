@@ -15,7 +15,7 @@ let package = Package(
         .package(url: "https://github.com/vapor/fluent-{{fluent.db.url}}-driver.git", from: "{{fluent.db.version}}"),{{/fluent}}{{#leaf}}
         // 🍃 An expressive, performant, and extensible templating language built for Swift.
         .package(url: "https://github.com/vapor/leaf.git", from: "4.2.4"),{{/leaf}}
-        .package(url: "https://github.com/dmoroz0v/ChatBotSDK.git", from: "0.0.9"),
+        .package(url: "https://github.com/dmoroz0v/ChatBotSDK.git", from: "0.1.0"),
     ],
     targets: [
         .executableTarget(
