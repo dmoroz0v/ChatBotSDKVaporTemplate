@@ -30,11 +30,13 @@ enum Entrypoint {
             throw error
         }
 
-        //Task.detached {
-        //    while true {
-        //        await bot.handleUpdates()
-        //    }
-        //}
+        if Environment.get("LONG_POLLING") == "1" {
+            Task.detached {
+                while true {
+                    await bot.handleUpdates()
+                }
+            }
+        }
 
         try await app.execute()
         try await app.asyncShutdown()
