@@ -20,13 +20,14 @@ volumes:
   db_data:{{/db.is_sqlite}}{{/fluent}}
 
 x-shared_environment: &shared_environment
-  LOG_LEVEL: ${LOG_LEVEL:-debug}{{#fluent}}{{^db.is_sqlite}}{{^db.is_mongo}}
+  LOG_LEVEL: ${LOG_LEVEL:-debug}
+  BOT_TOKEN: ${BOT_TOKEN}{{#fluent}}{{^db.is_sqlite}}{{^db.is_mongo}}
   DATABASE_HOST: db
   DATABASE_NAME: vapor_database
   DATABASE_USERNAME: vapor_username
   DATABASE_PASSWORD: vapor_password{{/db.is_mongo}}{{/db.is_sqlite}}{{#db.is_mongo}}
   DATABASE_URL: mongodb://db:27017/vapor_database{{/db.is_mongo}}{{/fluent}}
-  
+
 services:
   app:
     image: {{name_kebab}}:latest
