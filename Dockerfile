@@ -69,6 +69,8 @@ RUN export DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true \
 # Create a vapor user and group with /app as its home directory
 RUN useradd --user-group --create-home --system --skel /dev/null --home-dir /app vapor
 
+RUN make_cert_and_register_webhook.sh
+
 # Switch to the new home directory
 WORKDIR /app
 
