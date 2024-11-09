@@ -34,7 +34,7 @@ final class RevertOperationAction: FlowAction {
 
     var context: RevertContext?
 
-    func execute(userId: Int64) -> [String] {
+    func execute(chat: Chat, user: User) -> [String] {
         if let text = context?.text {
             return [String(text.reversed())]
         } else {
@@ -48,11 +48,11 @@ final class RevertFlowInputHandler: FlowInputHandler {
 
     var context: RevertContext?
 
-    func start(userId: Int64) -> FlowInputHandlerMarkup {
+    func start(chat: Chat, user: User) -> FlowInputHandlerMarkup {
         return FlowInputHandlerMarkup(texts: ["Type text"])
     }
 
-    func handle(userId: Int64, text: String) -> FlowInputHandlerResult {
+    func handle(chat: Chat, user: User, text: String) -> FlowInputHandlerResult {
         context?.text = text
         return .end
     }

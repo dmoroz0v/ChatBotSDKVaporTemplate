@@ -37,7 +37,7 @@ final class PickerOperationAction: FlowAction {
         self.context = context
     }
 
-    func execute(userId: Int64) -> [String] {
+    func execute(chat: Chat, user: User) -> [String] {
         if let text = context.text {
             return ["You picked '\(text)'"]
         } else {
@@ -62,7 +62,7 @@ final class PickerFlowInputHandler: FlowInputHandler {
         self.context = context
     }
 
-    func start(userId: Int64) -> FlowInputHandlerMarkup {
+    func start(chat: Chat, user: User) -> FlowInputHandlerMarkup {
         let data = Data(
             page: 1,
             items: [
@@ -92,7 +92,7 @@ final class PickerFlowInputHandler: FlowInputHandler {
         return FlowInputHandlerMarkup(texts: ["Pick item"], keyboard: keyboard, interrupt: false)
     }
 
-    func handle(userId: Int64, text: String) -> FlowInputHandlerResult {
+    func handle(chat: Chat, user: User, text: String) -> FlowInputHandlerResult {
 
         guard var data = data else {
             return .end

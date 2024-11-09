@@ -43,10 +43,10 @@ final class DatabaseInsertOperationAction: FlowAction {
         self.app = app
     }
 
-    func execute(userId: Int64) async -> [String] {
+    func execute(chat: Chat, user: User) async -> [String] {
         if let text = context?.text {
             do {
-                let r = Row(userId: userId, value: text)
+                let r = Row(userId: user.id, value: text)
                 try await r.save(on: app.db)
                 return ["Succeeded"]
             } catch let e {
@@ -63,11 +63,11 @@ final class DatabaseInsertFlowInputHandler: FlowInputHandler {
 
     var context: DatabaseInsertContext?
 
-    func start(userId: Int64) -> FlowInputHandlerMarkup {
+    func start(chat: Chat, user: User) -> FlowInputHandlerMarkup {
         return FlowInputHandlerMarkup(texts: ["Type text"])
     }
 
-    func handle(userId: Int64, text: String) -> FlowInputHandlerResult {
+    func handle(chat: Chat, user: User, text: String) -> FlowInputHandlerResult {
         context?.text = text
         return .end
     }

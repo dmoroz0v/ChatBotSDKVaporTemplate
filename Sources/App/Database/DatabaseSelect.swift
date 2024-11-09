@@ -28,9 +28,9 @@ final class DatabaseSelectOperationAction: FlowAction {
         self.app = app
     }
 
-    func execute(userId: Int64) async -> [String] {
+    func execute(chat: Chat, user: User) async -> [String] {
         do {
-            let rows = try await Row.query(on: app.db).filter(\.$userId == userId).all()
+            let rows = try await Row.query(on: app.db).filter(\.$userId == user.id).all()
             return [rows.map({ $0.value }).joined(separator: "\n")]
         } catch let e {
             return [e.localizedDescription]
