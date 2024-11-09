@@ -1,5 +1,4 @@
-{{#fluent}}import Fluent
-{{/fluent}}import Vapor
+import Vapor
 import TgBotSDK
 
 func routes(_ app: Application, bot: TgBotSDK.Bot) throws {

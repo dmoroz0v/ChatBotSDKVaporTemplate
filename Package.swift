@@ -1,4 +1,4 @@
-// swift-tools-version:5.9
+// swift-tools-version:6.0
 import PackageDescription
 
 let package = Package(
@@ -8,13 +8,15 @@ let package = Package(
     ],
     dependencies: [
         // 💧 A server-side Swift web framework.
-        .package(url: "https://github.com/vapor/vapor.git", from: "4.83.1"),{{#fluent}}
+        .package(url: "https://github.com/vapor/vapor.git", from: "4.99.3"),{{#fluent}}
         // 🗄 An ORM for SQL and NoSQL databases.
-        .package(url: "https://github.com/vapor/fluent.git", from: "4.8.0"),
+        .package(url: "https://github.com/vapor/fluent.git", from: "4.9.0"),
         // {{fluent.db.emoji}} Fluent driver for {{fluent.db.module}}.
         .package(url: "https://github.com/vapor/fluent-{{fluent.db.url}}-driver.git", from: "{{fluent.db.version}}"),{{/fluent}}{{#leaf}}
         // 🍃 An expressive, performant, and extensible templating language built for Swift.
-        .package(url: "https://github.com/vapor/leaf.git", from: "4.2.4"),{{/leaf}}
+        .package(url: "https://github.com/vapor/leaf.git", from: "4.3.0"),{{/leaf}}
+        // 🔵 Non-blocking, event-driven networking for Swift. Used for custom executors
+        .package(url: "https://github.com/apple/swift-nio.git", from: "2.65.0"),
         .package(url: "https://github.com/dmoroz0v/ChatBotSDK.git", from: "0.1.1"),
     ],
     targets: [
@@ -25,21 +27,28 @@ let package = Package(
                 .product(name: "Fluent{{fluent.db.module}}Driver", package: "fluent-{{fluent.db.url}}-driver"),{{/fluent}}{{#leaf}}
                 .product(name: "Leaf", package: "leaf"),{{/leaf}}
                 .product(name: "Vapor", package: "vapor"),
+                .product(name: "NIOCore", package: "swift-nio"),
+                .product(name: "NIOPosix", package: "swift-nio"),
                 .product(name: "ChatBotSDK", package: "ChatBotSDK"),
                 .product(name: "TgBotSDK", package: "ChatBotSDK"),
-            ]
+            ],
+            swiftSettings: swiftSettings
         ),
-        .testTarget(name: "AppTests", dependencies: [
-            .target(name: "App"),
-            .product(name: "XCTVapor", package: "vapor"),
-
-            // Workaround for https://github.com/apple/swift-package-manager/issues/6940
-            .product(name: "Vapor", package: "vapor"),{{#fluent}}
-            .product(name: "Fluent", package: "Fluent"),
-            .product(name: "Fluent{{fluent.db.module}}Driver", package: "fluent-{{fluent.db.url}}-driver"),{{/fluent}}{{#leaf}}
-            .product(name: "Leaf", package: "leaf"),{{/leaf}}
-            .product(name: "ChatBotSDK", package: "ChatBotSDK"),
-            .product(name: "TgBotSDK", package: "ChatBotSDK"),
-        ])
-    ]
+        .testTarget(
+            name: "AppTests",
+            dependencies: [
+                .target(name: "App"),
+                .product(name: "XCTVapor", package: "vapor"),
+                .product(name: "ChatBotSDK", package: "ChatBotSDK"),
+                .product(name: "TgBotSDK", package: "ChatBotSDK"),
+            ],
+            swiftSettings: swiftSettings
+        )
+    ],
+    swiftLanguageModes: [.v5]
 )
+
+var swiftSettings: [SwiftSetting] { [
+    .enableUpcomingFeature("DisableOutwardActorInference"),
+    .enableExperimentalFeature("StrictConcurrency"),
+] }

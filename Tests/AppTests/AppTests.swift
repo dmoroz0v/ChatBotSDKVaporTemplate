@@ -1,5 +1,6 @@
 @testable import App
 import XCTVapor
+import Testing
 
 final class AppTests: XCTestCase {
     func testHelloWorld() async throws {
