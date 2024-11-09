@@ -19,9 +19,11 @@ enum Entrypoint {
         // If enabled, you should be careful about calling async functions before this point as it can cause assertion failures.
         // let executorTakeoverSuccess = NIOSingletons.unsafeTryInstallSingletonPosixEventLoopGroupAsConcurrencyGlobalExecutor()
         // app.logger.debug("Tried to install SwiftNIO's EventLoopGroup as Swift's global concurrency executor", metadata: ["success": .stringConvertible(executorTakeoverSuccess)])
+
+        let bot = BotFactory().tgBot(app)
         
         do {
-            try await configure(app)
+            try await configure(app, bot: bot)
         } catch {
             app.logger.report(error: error)
             try? await app.asyncShutdown()
