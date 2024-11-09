@@ -9,7 +9,7 @@ public final class BotFactory {
     public func tgBot(_ app: Application) -> TgBotSDK.Bot {
         return TgBotSDK.Bot(
             botAssembly: BotAssemblyImpl(app: app),
-            token: "",
+            token: Environment.get("BOT_TOKEN") ?? "",
             apiEndpoint: "https://api.telegram.org/bot"
         )
     }
