@@ -45,7 +45,6 @@ public func configure(_ app: Application, bot: TgBotSDK.Bot) async throws {
     decoder.keyDecodingStrategy = .convertFromSnakeCase
     ContentConfiguration.global.use(decoder: decoder, for: .json)
 
-    if Environment.get("LONG_POLLING") != "1" {
     let botToken = Environment.get("BOT_TOKEN") ?? ""
 
     if Environment.get("BOT_MODE") == "WEBHOOK" {
@@ -96,4 +95,55 @@ public func configure(_ app: Application, bot: TgBotSDK.Bot) async throws {
 
     // register routes
     try routes(app, bot: bot)
+}
+
+struct MultipartFormDataRequest {
+    let boundary: String = UUID().uuidString
+    private var httpBody = NSMutableData()
+
+    func addTextField(named name: String, value: String) {
+        httpBody.append(textFormField(named: name, value: value))
+    }
+
+    private func textFormField(named name: String, value: String) -> String {
+        var fieldString = "--\(boundary)\r\n"
+        fieldString += "Content-Disposition: form-data; name=\"\(name)\"\r\n"
+        fieldString += "\r\n"
+        fieldString += "\(value)\r\n"
+
+        return fieldString
+    }
+
+    func addDataField(named name: String, filename: String, data: Data, mimeType: String) {
+        httpBody.append(dataFormField(named: name, filename: filename, data: data, mimeType: mimeType))
+    }
+
+    private func dataFormField(named name: String,
+                               filename: String,
+                               data: Data,
+                               mimeType: String) -> Data {
+        let fieldData = NSMutableData()
+
+        fieldData.append("--\(boundary)\r\n")
+        fieldData.append("Content-Disposition: form-data; name=\"\(name)\"; filename=\"\(filename)\"\r\n")
+        fieldData.append("Content-Type: \(mimeType)\r\n")
+        fieldData.append("\r\n")
+        fieldData.append(data)
+        fieldData.append("\r\n")
+
+        return fieldData as Data
+    }
+
+    func asData() -> Data {
+        httpBody.append("--\(boundary)--")
+        return httpBody as Data
+    }
+}
+
+extension NSMutableData {
+  func append(_ string: String) {
+    if let data = string.data(using: .utf8) {
+      self.append(data)
+    }
+  }
 }
