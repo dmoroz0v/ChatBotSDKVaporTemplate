@@ -87,7 +87,7 @@ public func configure(_ app: Application, bot: TgBotSDK.Bot) async throws {
         request.headers.contentType = .init(type: "multipart", subType: "form-data", parameters: [
             "boundary": multipartFormDataRequest.boundary
         ])
-        _ try await app.http.client.shared.execute(request, timeout: .seconds(30))
+        _ = try await app.http.client.shared.execute(request, timeout: .seconds(30))
     } else {
         var request = HTTPClientRequest(url: "https://api.telegram.org/bot\(botToken)/deleteWebhook")
         request.method = .POST
