@@ -5,6 +5,8 @@ import Fluent{{fluent.db.module}}Driver
 {{/leaf}}import Vapor
 import ChatBotSDK
 import TgBotSDK
+import AsyncHTTPClient
+import NIOFileSystem
 
 // configures your application
 public func configure(_ app: Application, bot: TgBotSDK.Bot) async throws {
@@ -44,6 +46,9 @@ public func configure(_ app: Application, bot: TgBotSDK.Bot) async throws {
     ContentConfiguration.global.use(decoder: decoder, for: .json)
 
     if Environment.get("LONG_POLLING") != "1" {
+    let botToken = Environment.get("BOT_TOKEN") ?? ""
+
+    if Environment.get("BOT_MODE") == "WEBHOOK" {
         app.http.server.configuration.hostname = Environment.get("BOT_DOMAIN") ?? ""
         app.http.server.configuration.port = 8443
 
@@ -56,6 +61,37 @@ public func configure(_ app: Application, bot: TgBotSDK.Bot) async throws {
             ],
             privateKey: .file("Cert/key.pem")
         )
+
+        
+        let fileHandle = try await FileSystem.shared.openFile(forReadingAt: .init("Cert/cert.pem"))
+        var certBuffer = try await fileHandle.readToEnd(maximumSizeAllowed: .unlimited)
+        let certData = certBuffer.readData(length: certBuffer.readableBytes) ?? Data()
+        try await fileHandle.close()
+        let botDomain = Environment.get("BOT_DOMAIN") ?? ""
+
+        let multipartFormDataRequest = MultipartFormDataRequest()
+        multipartFormDataRequest.addTextField(named: "url", value: "https://\(botDomain):8443/webhook")
+        if let botIpAddress = Environment.get("BOT_IP_ADDRESS") {
+            multipartFormDataRequest.addTextField(named: "ip_address", value: botIpAddress)
+        }
+        multipartFormDataRequest.addDataField(
+            named: "certificate",
+            filename: "cert.pem",
+            data: certData,
+            mimeType: "application/octet-stream"
+        )
+        let data = multipartFormDataRequest.asData()
+        var request = HTTPClientRequest(url: "https://api.telegram.org/bot\(botToken)/setWebhook")
+        request.method = .POST
+        request.body = .bytes(data)
+        request.headers.contentType = .init(type: "multipart", subType: "form-data", parameters: [
+            "boundary": multipartFormDataRequest.boundary
+        ])
+        _ try await app.http.client.shared.execute(request, timeout: .seconds(30))
+    } else {
+        var request = HTTPClientRequest(url: "https://api.telegram.org/bot\(botToken)/deleteWebhook")
+        request.method = .POST
+        _ = try await app.http.client.shared.execute(request, timeout: .seconds(30))
     }
 
     // register routes

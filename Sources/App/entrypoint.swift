@@ -30,7 +30,7 @@ enum Entrypoint {
             throw error
         }
 
-        if Environment.get("LONG_POLLING") == "1" {
+        if Environment.get("BOT_MODE") != "WEBHOOK" {
             Task.detached {
                 while true {
                     await bot.handleUpdates()

@@ -50,6 +50,7 @@ variables:
 files:
   - file: Package.swift
     dynamic: true
+  - file: make_cert.swift
   - folder: Sources
     files:
       - folder: App
