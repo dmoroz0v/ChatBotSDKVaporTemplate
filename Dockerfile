@@ -23,6 +23,8 @@ RUN swift package resolve \
 # Copy entire repo into container
 COPY . .
 
+RUN sh make_cert.sh
+
 # Build everything, with optimizations, with static linking, and using jemalloc
 # N.B.: The static version of jemalloc is incompatible with the static Swift runtime.
 RUN swift build -c release \

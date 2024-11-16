@@ -2,7 +2,7 @@
 
 readonly PATH_TO_CURR_DIR=`dirname $0`
 
-source $PATH_TO_CURR_DIR/.env
+. $PATH_TO_CURR_DIR/.env
 
 rm -f $PATH_TO_CURR_DIR/Cert/key.pem
 rm -f $PATH_TO_CURR_DIR/Cert/cert.pem
